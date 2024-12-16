@@ -1,0 +1,6 @@
+@GoodReviewBackend_HostAddress = http://localhost:5244
+
+GET {{GoodReviewBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
