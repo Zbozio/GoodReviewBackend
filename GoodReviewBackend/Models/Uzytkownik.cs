@@ -49,5 +49,6 @@ public partial class Uzytkownik
 
     public virtual ICollection<Gatunek> IdGatunkus { get; set; } = new List<Gatunek>();
 
+
     public virtual ICollection<Ksiazka> IdKsiazkas { get; set; } = new List<Ksiazka>();
 }

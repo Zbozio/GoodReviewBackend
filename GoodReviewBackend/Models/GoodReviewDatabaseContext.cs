@@ -49,10 +49,6 @@ public partial class GoodReviewDatabaseContext : DbContext
 
     public virtual DbSet<Znajomi> Znajomis { get; set; }
 
-    public virtual DbSet<Gatunkowosc> Gatunkowosci { get; set; }  // Dodanie tabeli pośredniej
-
-
-
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -91,6 +87,7 @@ public partial class GoodReviewDatabaseContext : DbContext
             entity.Property(e => e.Wiek).HasColumnName("WIEK");
         });
 
+
         modelBuilder.Entity<Gatunek>(entity =>
         {
             entity.HasKey(e => e.IdGatunku).IsClustered(false);
@@ -103,17 +100,13 @@ public partial class GoodReviewDatabaseContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("NAZWA_GATUNKU");
 
-            entity.HasMany(d => d.IdKsiazkas).WithMany(p => p.IdGatunkus)
+            // Relacja wiele do wielu z Ksiazka
+            entity.HasMany(d => d.IdKsiazkas)
+                .WithMany(p => p.IdGatunkus)
                 .UsingEntity<Dictionary<string, object>>(
-                    "Gatunkowosc",
-                    r => r.HasOne<Ksiazka>().WithMany()
-                        .HasForeignKey("IdKsiazka")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_GATUNKOW_GATUNKOWO_KSIAZKA"),
-                    l => l.HasOne<Gatunek>().WithMany()
-                        .HasForeignKey("IdGatunku")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_GATUNKOW_GATUNKOWO_GATUNEK"),
+                    "Gatunkowosc",  // Tabela pośrednia
+                    r => r.HasOne<Ksiazka>().WithMany().HasForeignKey("IdKsiazka"),
+                    l => l.HasOne<Gatunek>().WithMany().HasForeignKey("IdGatunku"),
                     j =>
                     {
                         j.HasKey("IdGatunku", "IdKsiazka").IsClustered(false);
@@ -124,17 +117,13 @@ public partial class GoodReviewDatabaseContext : DbContext
                         j.IndexerProperty<int>("IdKsiazka").HasColumnName("ID_KSIAZKA");
                     });
 
-            entity.HasMany(d => d.IdUzytkowniks).WithMany(p => p.IdGatunkus)
+            // Relacja wiele do wielu z Uzytkownik
+            entity.HasMany(d => d.IdUzytkowniks)
+                .WithMany(p => p.IdGatunkus)
                 .UsingEntity<Dictionary<string, object>>(
-                    "UlubioneGatunki",
-                    r => r.HasOne<Uzytkownik>().WithMany()
-                        .HasForeignKey("IdUzytkownik")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_ULUBIONE_ULUBIONE__UZYTKOWN"),
-                    l => l.HasOne<Gatunek>().WithMany()
-                        .HasForeignKey("IdGatunku")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_ULUBIONE_ULUBIONE__GATUNEK"),
+                    "UlubioneGatunki",  // Tabela pośrednia dla użytkowników
+                    r => r.HasOne<Uzytkownik>().WithMany().HasForeignKey("IdUzytkownik"),
+                    l => l.HasOne<Gatunek>().WithMany().HasForeignKey("IdGatunku"),
                     j =>
                     {
                         j.HasKey("IdGatunku", "IdUzytkownik").IsClustered(false);

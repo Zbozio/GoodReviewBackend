@@ -4,30 +4,36 @@ using GoodReviewBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class RegisterController : ControllerBase
+namespace GoodReviewBackend.Controllers
 {
-    private readonly RegistrationService _registrationService;
-
-    public RegisterController(RegistrationService registrationService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RegisterController : ControllerBase
     {
-        _registrationService = registrationService;
-    }
+        private readonly RegistrationService _registrationService;
 
-    // Endpoint do rejestracji
-    [HttpPost]
-    public async Task<IActionResult> Register([FromBody] UzytkownikDTO userDto)
-    {
-        // Zabezpieczenie przed pustym emailem lub hasłem
-        if (string.IsNullOrEmpty(userDto.EMail) || string.IsNullOrEmpty(userDto.Haslo))
+        public RegisterController(RegistrationService registrationService)
         {
-            return BadRequest("Email i hasło są wymagane.");
+            _registrationService = registrationService;
         }
 
-        // Rejestracja użytkownika
-        await _registrationService.RegisterUserAsync(userDto);
+        // Endpoint do rejestracji
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] UzytkownikDTO userDto)
+        {
+            // Zabezpieczenie przed pustym emailem lub hasłem
+            if (string.IsNullOrEmpty(userDto.EMail) || string.IsNullOrEmpty(userDto.Haslo))
+            {
+                return BadRequest("Email i hasło są wymagane.");
+            }
 
-        return Ok(new { message = "Użytkownik został zarejestrowany!" });
+            
+
+            // Rejestracja użytkownika
+            await _registrationService.RegisterUserAsync(userDto);
+
+            // Zwrócenie odpowiedzi z komunikatem
+            return Ok(new { message = "Użytkownik został zarejestrowany!" });
+        }
     }
 }

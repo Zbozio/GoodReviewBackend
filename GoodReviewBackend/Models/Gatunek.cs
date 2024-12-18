@@ -12,4 +12,8 @@ public partial class Gatunek
     public virtual ICollection<Ksiazka> IdKsiazkas { get; set; } = new List<Ksiazka>();
 
     public virtual ICollection<Uzytkownik> IdUzytkowniks { get; set; } = new List<Uzytkownik>();
+
+
+
+
 }

@@ -4,6 +4,7 @@ using GoodReviewBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoodReviewBackend.Migrations
 {
     [DbContext(typeof(GoodReviewDatabaseContext))]
-    partial class GoodReviewDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241216182407_AddGatunkowoscTable")]
+    partial class AddGatunkowoscTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,19 +46,25 @@ namespace GoodReviewBackend.Migrations
                     b.ToTable("DODAWANIE_DO_LIST", (string)null);
                 });
 
-            modelBuilder.Entity("GatunekKsiazka", b =>
+            modelBuilder.Entity("Gatunkowosc", b =>
                 {
-                    b.Property<int>("IdGatunkusIdGatunku")
-                        .HasColumnType("int");
+                    b.Property<int>("IdGatunku")
+                        .HasColumnType("int")
+                        .HasColumnName("ID_GATUNKU");
 
-                    b.Property<int>("IdKsiazkasIdKsiazka")
-                        .HasColumnType("int");
+                    b.Property<int>("IdKsiazka")
+                        .HasColumnType("int")
+                        .HasColumnName("ID_KSIAZKA");
 
-                    b.HasKey("IdGatunkusIdGatunku", "IdKsiazkasIdKsiazka");
+                    b.HasKey("IdGatunku", "IdKsiazka");
 
-                    b.HasIndex("IdKsiazkasIdKsiazka");
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("IdGatunku", "IdKsiazka"), false);
 
-                    b.ToTable("GatunekKsiazka");
+                    b.HasIndex(new[] { "IdKsiazka" }, "GATUNKOWOSC2_FK");
+
+                    b.HasIndex(new[] { "IdGatunku" }, "GATUNKOWOSC_FK");
+
+                    b.ToTable("GATUNKOWOSC", (string)null);
                 });
 
             modelBuilder.Entity("GoodReviewBackend.Models.Autor", b =>
@@ -133,28 +142,16 @@ namespace GoodReviewBackend.Migrations
             modelBuilder.Entity("GoodReviewBackend.Models.Gatunkowosc", b =>
                 {
                     b.Property<int>("IdKsiazka")
-                        .HasColumnType("int")
-                        .HasColumnName("IdKsiazka");
-
-                    b.Property<int>("IdGatunku")
-                        .HasColumnType("int")
-                        .HasColumnName("IdGatunku");
-
-                    b.Property<int?>("GatunekIdGatunku")
                         .HasColumnType("int");
 
-                    b.Property<int?>("KsiazkaIdKsiazka")
+                    b.Property<int>("IdGatunek")
                         .HasColumnType("int");
 
-                    b.HasKey("IdKsiazka", "IdGatunku");
+                    b.HasKey("IdKsiazka", "IdGatunek");
 
-                    b.HasIndex("GatunekIdGatunku");
+                    b.HasIndex("IdGatunek");
 
-                    b.HasIndex("IdGatunku");
-
-                    b.HasIndex("KsiazkaIdKsiazka");
-
-                    b.ToTable("GATUNKOWOSC", (string)null);
+                    b.ToTable("Gatunkowosci");
                 });
 
             modelBuilder.Entity("GoodReviewBackend.Models.Komentarz", b =>
@@ -794,42 +791,32 @@ namespace GoodReviewBackend.Migrations
                         .HasConstraintName("FK_DODAWANI_DODAWANIE_LISTA");
                 });
 
-            modelBuilder.Entity("GatunekKsiazka", b =>
+            modelBuilder.Entity("Gatunkowosc", b =>
                 {
                     b.HasOne("GoodReviewBackend.Models.Gatunek", null)
-                        .WithMany()
-                        .HasForeignKey("IdGatunkusIdGatunku")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GoodReviewBackend.Models.Ksiazka", null)
-                        .WithMany()
-                        .HasForeignKey("IdKsiazkasIdKsiazka")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GoodReviewBackend.Models.Gatunkowosc", b =>
-                {
-                    b.HasOne("GoodReviewBackend.Models.Gatunek", null)
-                        .WithMany("Gatunkowosci")
-                        .HasForeignKey("GatunekIdGatunku");
-
-                    b.HasOne("GoodReviewBackend.Models.Gatunek", "Gatunek")
                         .WithMany()
                         .HasForeignKey("IdGatunku")
                         .IsRequired()
                         .HasConstraintName("FK_GATUNKOW_GATUNKOWO_GATUNEK");
 
-                    b.HasOne("GoodReviewBackend.Models.Ksiazka", "Ksiazka")
+                    b.HasOne("GoodReviewBackend.Models.Ksiazka", null)
                         .WithMany()
                         .HasForeignKey("IdKsiazka")
                         .IsRequired()
                         .HasConstraintName("FK_GATUNKOW_GATUNKOWO_KSIAZKA");
+                });
 
-                    b.HasOne("GoodReviewBackend.Models.Ksiazka", null)
+            modelBuilder.Entity("GoodReviewBackend.Models.Gatunkowosc", b =>
+                {
+                    b.HasOne("GoodReviewBackend.Models.Gatunek", "Gatunek")
                         .WithMany("Gatunkowosci")
-                        .HasForeignKey("KsiazkaIdKsiazka");
+                        .HasForeignKey("IdGatunek")
+                        .IsRequired();
+
+                    b.HasOne("GoodReviewBackend.Models.Ksiazka", "Ksiazka")
+                        .WithMany("Gatunkowosci")
+                        .HasForeignKey("IdKsiazka")
+                        .IsRequired();
 
                     b.Navigation("Gatunek");
 

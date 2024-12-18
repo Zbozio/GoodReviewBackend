@@ -99,6 +99,21 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/ksiazki")]
+        public async Task<ActionResult<IEnumerable<Ksiazka>>> GetKsiazkiByGatunek(int id)
+        {
+            var gatunek = await _context.Gatuneks
+                .Include(g => g.IdKsiazkas) // Dołączamy powiązane książki
+                .FirstOrDefaultAsync(g => g.IdGatunku == id);
+
+            if (gatunek == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(gatunek.IdKsiazkas); // Zwracamy książki powiązane z gatunkiem
+        }
+
         private bool GatunekExists(int id)
         {
             return _context.Gatuneks.Any(e => e.IdGatunku == id);

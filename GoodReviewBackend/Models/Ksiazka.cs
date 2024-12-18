@@ -42,4 +42,9 @@ public partial class Ksiazka
     public virtual ICollection<Tagi> IdOceny5s { get; set; } = new List<Tagi>();
 
     public virtual ICollection<Uzytkownik> IdUzytkowniks { get; set; } = new List<Uzytkownik>();
+
+   
+
+
+
 }
