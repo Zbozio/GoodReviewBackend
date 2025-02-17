@@ -82,7 +82,21 @@ namespace GoodReviewBackend.Controllers
 
             return CreatedAtAction("GetKomentarz", new { id = komentarz.IdOceny3 }, komentarz);
         }
+        [HttpGet("review/{reviewId}")]
+        public async Task<ActionResult<IEnumerable<Komentarz>>> GetCommentsByReview(int reviewId)
+        {
+            // Wyszukaj komentarze, które są przypisane do konkretnej recenzji
+            var komentarze = await _context.Komentarzs
+                .Where(k => k.IdRecenzji == reviewId)  // Filtrowanie po ID recenzji
+                .ToListAsync();
 
+            if (komentarze == null || komentarze.Count == 0)
+            {
+                return NotFound("No comments found for this review.");
+            }
+
+            return Ok(komentarze);  // Zwróć komentarze
+        }
         // DELETE: api/Komentarzs/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKomentarz(int id)

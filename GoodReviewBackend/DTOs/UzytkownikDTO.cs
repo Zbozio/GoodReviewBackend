@@ -4,7 +4,8 @@ namespace GoodReviewBackend.DTOs
 {
     public class UzytkownikDTO
     {
-        
+
+        public int IdUzytkownik { get; set; }
         public string? Imie { get; set; }
         public string? Nazwisko { get; set; }
         public string? EMail { get; set; }
@@ -17,6 +18,8 @@ namespace GoodReviewBackend.DTOs
         public string? Opis { get; set; }
 
         public int? IdOceny2 { get; set; }
+
+        public int? IloscOcenionychKsiazek { get; set; }
 
         // Tylko dla rejestracji użytkownika
         public string? Haslo { get; set; }

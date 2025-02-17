@@ -25,6 +25,7 @@ namespace GoodReviewBackend.Controllers
                 .Include(k => k.IdGatunkus)  // Ładowanie gatunków przypisanych do książek
                 .Select(k => new
                 {
+                    k.IdKsiazka,
                     k.Tytul,
                     k.Opis,
                     Genres = k.IdGatunkus.Select(g => new
@@ -49,7 +50,8 @@ namespace GoodReviewBackend.Controllers
                     g.IdGatunku,                // Dodanie id gatunku
                     g.NazwaGatunku,
                     Books = g.IdKsiazkas.Select(k => new
-                    {
+                    {   
+                        k.IdKsiazka,
                         k.Tytul                   // Zwracanie tytułów książek
                     }).ToList()
                 })
@@ -67,6 +69,7 @@ namespace GoodReviewBackend.Controllers
                 .Include(k => k.IdGatunkus)  // Ładowanie gatunków przypisanych do książki
                 .Select(k => new
                 {
+                    k.IdKsiazka,
                     k.Tytul,
                     k.Opis,
                     Genres = k.IdGatunkus.Select(g => new
@@ -97,6 +100,7 @@ namespace GoodReviewBackend.Controllers
                     g.NazwaGatunku,
                     Books = g.IdKsiazkas.Select(k => new
                     {
+                        k.IdKsiazka,
                         k.Tytul,
                         k.Okladka  // Dodaj URL zdjęcia okładki książki
                     }).ToList()

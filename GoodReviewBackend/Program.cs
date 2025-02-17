@@ -12,8 +12,6 @@ builder.Services.AddScoped<IAuthService, AuthService>(); // Rejestracja AuthServ
 builder.Services.AddScoped<PasswordHasherService>();   // Rejestracja PasswordHasherService
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<KsiazkiUzytkownikaService>();
-builder.Services.AddScoped<IGatunkowoscService, GatunkowoscService>();
-
 
 // Dodajemy konfiguracjê JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

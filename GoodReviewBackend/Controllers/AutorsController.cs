@@ -27,19 +27,46 @@ namespace GoodReviewBackend.Controllers
             return await _context.Autors.ToListAsync();
         }
 
-        // GET: api/Autors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Autor>> GetAutor(int id)
+        public async Task<IActionResult> GetAutor(int id)
         {
+            // Znajdź autora
             var autor = await _context.Autors.FindAsync(id);
-
             if (autor == null)
             {
                 return NotFound();
             }
 
-            return autor;
+            // Pobierz dane powiązane
+            var booksWithDetails = await _context.Udzials
+                .Where(u => u.IdAutora == id)
+                .Join(_context.Ksiazkas,
+                      u => u.IdKsiazka,
+                      k => k.IdKsiazka,
+                      (udzial, ksiazka) => new
+                      {
+                          IdKsiazka = ksiazka.IdKsiazka,
+                          Tytul = ksiazka.Tytul,
+                          Okladka = ksiazka.Okladka
+                      })
+                .ToListAsync();
+
+            // Zwróć odpowiedź jako dane autora i powiązane książki
+            return Ok(new
+            {
+                IdAutora = autor.IdAutora,
+                ImieAutora = autor.ImieAutora,
+                NazwiskoAutora = autor.NazwiskoAutora,
+                Wiek = autor.Wiek,
+                DataUrodzenia = autor.DataUrodzenia,
+                Opis = autor.Opis,
+                DataSmierci = autor.DataSmierci,
+                Pseudonim = autor.Pseudonim,
+                Ksiazki = booksWithDetails
+            });
         }
+
+
 
         // PUT: api/Autors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -97,6 +124,21 @@ namespace GoodReviewBackend.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        // GET: api/Autors/search?query=authorName
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Autor>>> SearchAuthors(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest("Query cannot be empty.");
+            }
+
+            var authors = await _context.Autors
+                .Where(a => EF.Functions.Like(a.ImieAutora, $"%{query}%"))
+                .ToListAsync();
+
+            return Ok(authors);
         }
 
         private bool AutorExists(int id)

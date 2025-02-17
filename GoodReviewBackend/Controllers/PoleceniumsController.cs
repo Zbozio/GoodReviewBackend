@@ -18,7 +18,7 @@ namespace GoodReviewBackend.Controllers
         public PoleceniumsController(GoodReviewDatabaseContext context)
         {
             _context = context;
-        }
+        } 
 
         // GET: api/Poleceniums
         [HttpGet]

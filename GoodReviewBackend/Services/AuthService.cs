@@ -48,7 +48,9 @@ public class AuthService : IAuthService
         var claims = new[]
         {
             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.IdUzytkownik.ToString()),
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.EMail)
+            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.EMail),
+            new System.Security.Claims.Claim("role", user.IdOceny2.ToString()) // Dodanie roli (ID roli użytkownika)
+
         };
 
         // Konfiguracja klucza i podpisu tokenu

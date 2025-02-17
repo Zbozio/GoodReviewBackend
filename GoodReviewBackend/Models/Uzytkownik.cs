@@ -1,4 +1,5 @@
 ﻿using GoodReviewBackend.Models;
+using System.Text.Json.Serialization;
 
 public partial class Uzytkownik
 {
@@ -49,6 +50,6 @@ public partial class Uzytkownik
 
     public virtual ICollection<Gatunek> IdGatunkus { get; set; } = new List<Gatunek>();
 
-
+    [JsonIgnore]
     public virtual ICollection<Ksiazka> IdKsiazkas { get; set; } = new List<Ksiazka>();
 }

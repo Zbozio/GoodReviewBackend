@@ -20,88 +20,169 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Znajomis
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Znajomi>>> GetZnajomis()
+        // POST: api/Znajomis/SendRequest
+        [HttpPost("SendRequest")]
+        public async Task<IActionResult> SendFriendRequest(int senderId, int recipientId)
         {
-            return await _context.Znajomis.ToListAsync();
-        }
-
-        // GET: api/Znajomis/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Znajomi>> GetZnajomi(int id)
-        {
-            var znajomi = await _context.Znajomis.FindAsync(id);
-
-            if (znajomi == null)
+            if (senderId == recipientId)
             {
-                return NotFound();
+                return BadRequest("Nie możesz wysłać zaproszenia do siebie.");
             }
 
-            return znajomi;
-        }
+            var existingRelation = await _context.Znajomis
+                .FirstOrDefaultAsync(z =>
+                    (z.IdUzytkownik == senderId && z.UzyIdUzytkownik == recipientId) ||
+                    (z.IdUzytkownik == recipientId && z.UzyIdUzytkownik == senderId));
 
-        // PUT: api/Znajomis/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutZnajomi(int id, Znajomi znajomi)
-        {
-            if (id != znajomi.IdZnajomosci)
+            if (existingRelation != null)
             {
-                return BadRequest();
+                return BadRequest("Relacja już istnieje lub czeka na akceptację.");
             }
 
-            _context.Entry(znajomi).State = EntityState.Modified;
-
-            try
+            var newRequest = new Znajomi
             {
+                IdUzytkownik = senderId,
+                UzyIdUzytkownik = recipientId,
+                DataZnajomosci = null,
+                StatusZnajomosci = "Pending"
+            };
+
+            _context.Znajomis.Add(newRequest);
+            await _context.SaveChangesAsync();
+
+            return Ok("Zaproszenie zostało wysłane.");
+        }
+
+        // POST: api/Znajomis/RespondToRequest
+        [HttpPost("RespondToRequest")]
+        public async Task<IActionResult> RespondToFriendRequest(int requestId, bool isAccepted)
+        {
+            var friendRequest = await _context.Znajomis.FindAsync(requestId);
+
+            if (friendRequest == null)
+            {
+                return NotFound("Zaproszenie nie zostało znalezione.");
+            }
+
+            if (friendRequest.StatusZnajomosci != "Pending")
+            {
+                return BadRequest("Zaproszenie zostało już zaakceptowane lub odrzucone.");
+            }
+
+            if (isAccepted)
+            {
+                friendRequest.StatusZnajomosci = "Accepted";
+                friendRequest.DataZnajomosci = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
+                return Ok("Zaproszenie zostało zaakceptowane.");
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!ZnajomiExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _context.Znajomis.Remove(friendRequest);
+                await _context.SaveChangesAsync();
+                return Ok("Zaproszenie zostało odrzucone.");
             }
-
-            return NoContent();
         }
 
-        // POST: api/Znajomis
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Znajomi>> PostZnajomi(Znajomi znajomi)
+        // GET: api/Znajomis/PendingRequests/5
+        [HttpGet("PendingRequests/{userId}")]
+        public async Task<IActionResult> GetPendingFriendRequests(int userId)
         {
-            _context.Znajomis.Add(znajomi);
+            var pendingRequests = await _context.Znajomis
+                .Where(z =>
+                    (z.IdUzytkownik == userId || z.UzyIdUzytkownik == userId) &&
+                    z.StatusZnajomosci == "Pending")
+                .Select(z => new
+                {
+                    RequestId = z.IdZnajomosci, // ID zaproszenia
+                    SenderId = z.IdUzytkownik == userId ? z.UzyIdUzytkownik : z.IdUzytkownik, // Kto wysłał
+                    z.DataZnajomosci,
+                    SenderDetails = z.IdUzytkownik == userId
+                        ? new
+                        {
+                            z.UzyIdUzytkownikNavigation.Imie,
+                            z.UzyIdUzytkownikNavigation.Nazwisko,
+                            z.UzyIdUzytkownikNavigation.Zdjecie
+                        }
+                        : new
+                        {
+                            z.IdUzytkownikNavigation.Imie,
+                            z.IdUzytkownikNavigation.Nazwisko,
+                            z.IdUzytkownikNavigation.Zdjecie
+                        }
+                })
+                .ToListAsync();
+
+            return Ok(pendingRequests);
+        }
+        // DELETE: api/Znajomis/RemoveFriend/{friendshipId}
+        [HttpDelete("RemoveFriend/{friendshipId}")]
+        public async Task<IActionResult> RemoveFriend(int friendshipId)
+        {
+            var friendship = await _context.Znajomis.FindAsync(friendshipId);
+
+            if (friendship == null)
+            {
+                return NotFound("Znajomość nie została znaleziona.");
+            }
+
+            _context.Znajomis.Remove(friendship);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetZnajomi", new { id = znajomi.IdZnajomosci }, znajomi);
+            return Ok("Znajomość została usunięta.");
         }
 
-        // DELETE: api/Znajomis/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteZnajomi(int id)
+
+        // GET: api/Znajomis/UserFriends/5
+        [HttpGet("UserFriends/{userId}")]
+        public async Task<IActionResult> GetUserFriends(int userId)
         {
-            var znajomi = await _context.Znajomis.FindAsync(id);
-            if (znajomi == null)
-            {
-                return NotFound();
-            }
+            var friends = await _context.Znajomis
+                .Where(z =>
+                    (z.IdUzytkownik == userId || z.UzyIdUzytkownik == userId) &&
+                    z.StatusZnajomosci == "Accepted")
+                .Select(z => new
+                {
+                    FriendId = z.IdUzytkownik == userId ? z.UzyIdUzytkownik : z.IdUzytkownik,
+                    z.DataZnajomosci,
+                    z.IdZnajomosci,  // Dodajemy ID znajomości
+                    FriendDetails = z.IdUzytkownik == userId
+                        ? new
+                        {
+                            z.UzyIdUzytkownikNavigation.Imie,
+                            z.UzyIdUzytkownikNavigation.Nazwisko,
+                            z.UzyIdUzytkownikNavigation.EMail,
+                            z.UzyIdUzytkownikNavigation.Zdjecie,
+                            // Liczba ocenionych książek dla znajomego
+                            IloscOcenionychKsiazek = _context.Ocenas
+                                .Where(o => o.IdUzytkownik == z.UzyIdUzytkownik)
+                                .Select(o => o.IdKsiazka)
+                                .Distinct()
+                                .Count(),
+                            // Liczba napisanych recenzji dla znajomego
+                            IloscRecenzji = _context.Recenzjas
+                                .Count(r => r.IdUzytkownik == z.UzyIdUzytkownik)
+                        }
+                        : new
+                        {
+                            z.IdUzytkownikNavigation.Imie,
+                            z.IdUzytkownikNavigation.Nazwisko,
+                            z.IdUzytkownikNavigation.EMail,
+                            z.IdUzytkownikNavigation.Zdjecie,
+                            // Liczba ocenionych książek dla znajomego
+                            IloscOcenionychKsiazek = _context.Ocenas
+                                .Where(o => o.IdUzytkownik == z.IdUzytkownik)
+                                .Select(o => o.IdKsiazka)
+                                .Distinct()
+                                .Count(),
+                            // Liczba napisanych recenzji dla znajomego
+                            IloscRecenzji = _context.Recenzjas
+                                .Count(r => r.IdUzytkownik == z.IdUzytkownik)
+                        }
+                })
+                .ToListAsync();
 
-            _context.Znajomis.Remove(znajomi);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ZnajomiExists(int id)
-        {
-            return _context.Znajomis.Any(e => e.IdZnajomosci == id);
+            return Ok(friends);
         }
     }
 }

@@ -24,7 +24,6 @@ public class KsiazkiUzytkownikaService
                 IdKsiazka = o.IdKsiazkaNavigation.IdKsiazka,           // Identyfikator książki
                 Tytul = o.IdKsiazkaNavigation.Tytul,            // Tytuł książki
                 Okladka = o.IdKsiazkaNavigation.Okladka,        // Okładka książki (jeśli istnieje)
-                OcenaWartosc = o.WartoscOceny ?? 0              // Ocena książki (domyślnie 0, jeśli brak oceny)
             })
             .ToListAsync();
 

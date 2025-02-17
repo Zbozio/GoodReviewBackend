@@ -55,7 +55,7 @@ namespace GoodReviewBackend.Migrations
 
                     b.HasIndex("IdKsiazkasIdKsiazka");
 
-                    b.ToTable("GatunekKsiazka");
+                    b.ToTable("GatunekKsiazka", (string)null);
                 });
 
             modelBuilder.Entity("GoodReviewBackend.Models.Autor", b =>

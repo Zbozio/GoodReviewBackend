@@ -537,10 +537,16 @@ public partial class GoodReviewDatabaseContext : DbContext
                 .HasColumnName("ZDJECIE");
             entity.Property(e => e.Znajomi).HasColumnName("ZNAJOMI");
 
+            // Konfiguracja kolumny DataUrodzenia
+            entity.Property(e => e.DataUrodzenia)
+                .HasColumnType("date")  // Ustawienie typu kolumny na "date"
+                .HasColumnName("DataUrodzenia"); // Ustawienie nazwy kolumny w bazie danych
+
             entity.HasOne(d => d.IdOceny2Navigation).WithMany(p => p.Uzytkowniks)
                 .HasForeignKey(d => d.IdOceny2)
                 .HasConstraintName("FK_UZYTKOWN_ROLA_UZYT_ROLA");
         });
+
 
         modelBuilder.Entity<Wydawnictwo>(entity =>
         {

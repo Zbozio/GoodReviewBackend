@@ -83,6 +83,7 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetKsiazka", new { id = ksiazka.IdKsiazka }, ksiazka);
         }
 
+
         // DELETE: api/Ksiazkas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKsiazka(int id)

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GoodReviewBackend.Models;
+using NuGet.Packaging;
 
 namespace GoodReviewBackend.Controllers
 {
@@ -41,8 +42,38 @@ namespace GoodReviewBackend.Controllers
             return tagi;
         }
 
+        // GET: api/Tagis/{id}/books
+        [HttpGet("{id}/books")]
+        public async Task<ActionResult<object>> GetBooksByTag(int id)
+        {
+            // Sprawdzenie, czy tag istnieje
+            var tag = await _context.Tagis.FindAsync(id);
+            if (tag == null)
+            {
+                return NotFound(); // Jeśli tag nie istnieje
+            }
+
+            // Pobranie książek powiązanych z tym tagiem
+            var books = await _context.Ksiazkas
+                .Where(k => k.IdOceny5s.Any(kt => kt.IdOceny5 == id)) // Filtrujemy książki powiązane z danym tagiem
+                .Select(k => new { k.IdKsiazka, k.Tytul }) // Zwracamy tylko IdKsiazka oraz Tytul
+                .ToListAsync();
+
+            if (!books.Any())  // Jeśli brak książek powiązanych z tagiem
+            {
+                return NoContent(); // Zwróć 204 No Content, jeśli brak książek
+            }
+
+            // Zwracamy wynik z tagiem oraz listą książek
+            return Ok(new
+            {
+                TagName = tag.NazwaTagu, // Zwracamy nazwę tagu z modelu Tagi
+                Books = books
+            });
+        }
+
+
         // PUT: api/Tagis/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTagi(int id, Tagi tagi)
         {
@@ -73,7 +104,6 @@ namespace GoodReviewBackend.Controllers
         }
 
         // POST: api/Tagis
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Tagi>> PostTagi(Tagi tagi)
         {
@@ -98,6 +128,73 @@ namespace GoodReviewBackend.Controllers
 
             return NoContent();
         }
+        // POST: api/Tagis/{bookId}/assign-tags
+        [HttpPost("{bookId}/assign-tags")]
+        public async Task<IActionResult> AssignTagsToBook(int bookId, [FromBody] List<int> tagIds)
+        {
+            // Sprawdzenie, czy książka istnieje
+            var ksiazka = await _context.Ksiazkas.FindAsync(bookId);
+            if (ksiazka == null)
+            {
+                return NotFound(); // Jeśli książka nie istnieje
+            }
+
+            // Sprawdzenie, czy tagi istnieją
+            var tags = await _context.Tagis.Where(t => tagIds.Contains(t.IdOceny5)).ToListAsync();
+            if (tags.Count != tagIds.Count)
+            {
+                return NotFound("Some tags not found"); // Jeśli któryś z tagów nie istnieje
+            }
+
+            // Przypisanie tagów do książki
+            foreach (var tag in tags)
+            {
+                // Sprawdzenie, czy dany tag nie jest już przypisany do książki
+                if (!ksiazka.IdOceny5s.Contains(tag))
+                {
+                    ksiazka.IdOceny5s.Add(tag); // Dodajemy tag tylko jeśli nie jest już przypisany
+                }
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync(); // Zapisz zmiany do bazy danych
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error assigning tags: " + ex.Message);
+            }
+
+            // Zwracamy książkę z przypisanymi tagami
+            var result = ksiazka.IdOceny5s.Select(t => new { t.IdOceny5, t.NazwaTagu }).ToList();
+            return Ok(result); // Zwracamy listę tagów powiązanych z książką
+        }
+        // GET: api/Tagis/{bookId}/tags
+        [HttpGet("{bookId}/tags")]
+        public async Task<ActionResult<IEnumerable<object>>> GetTagsForBook(int bookId)
+        {
+            // Sprawdzenie, czy książka istnieje
+            var ksiazka = await _context.Ksiazkas
+                .Include(k => k.IdOceny5s) // Upewniamy się, że tagi są załadowane
+                .FirstOrDefaultAsync(k => k.IdKsiazka == bookId);
+
+            if (ksiazka == null)
+            {
+                return NotFound(); // Jeśli książka nie istnieje
+            }
+
+            // Zwracamy tagi przypisane do książki
+            var tags = ksiazka.IdOceny5s.Select(t => new { t.IdOceny5, t.NazwaTagu }).ToList();
+
+            if (!tags.Any())
+            {
+                return NoContent(); // Zwracamy 204 No Content, jeśli brak tagów
+            }
+
+            return Ok(tags); // Zwracamy listę tagów
+        }
+
+
 
         private bool TagiExists(int id)
         {

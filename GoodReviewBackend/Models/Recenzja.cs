@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoodReviewBackend.Models;
 
@@ -16,10 +17,11 @@ public partial class Recenzja
     public DateTime? DataRecenzji { get; set; }
 
     public int? PolubieniaRecenzji { get; set; }
+    [JsonIgnore]
 
-    public virtual Ksiazka IdKsiazkaNavigation { get; set; } = null!;
-
-    public virtual Uzytkownik IdUzytkownikNavigation { get; set; } = null!;
-
+    public virtual Ksiazka? IdKsiazkaNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Uzytkownik? IdUzytkownikNavigation { get; set; } = null!;
+    [JsonIgnore]
     public virtual ICollection<Komentarz> Komentarzs { get; set; } = new List<Komentarz>();
 }

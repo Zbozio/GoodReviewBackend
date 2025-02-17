@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Listums
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Listum>>> GetLista()
         {
             return await _context.Lista.ToListAsync();
         }
 
-        // GET: api/Listums/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Listum>> GetListum(int id)
         {
@@ -98,6 +96,22 @@ namespace GoodReviewBackend.Controllers
 
             return NoContent();
         }
+        // GET: api/Listums/user/{userId}
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<Listum>>> GetListsForUser(int userId)
+        {
+            var userLists = await _context.Lista
+                                          .Where(l => l.IdUzytkownik == userId)
+                                          .ToListAsync();
+
+            if (userLists == null || !userLists.Any())
+            {
+                return NotFound($"No lists found for user with ID: {userId}");
+            }
+
+            return userLists;
+        }
+
 
         private bool ListumExists(int id)
         {

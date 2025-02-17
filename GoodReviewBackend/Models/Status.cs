@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoodReviewBackend.Models;
 
@@ -16,6 +17,7 @@ public partial class Status
     public string? KomentarzStatusu { get; set; }
 
     public DateTime? DataStatusu { get; set; }
+    [JsonIgnore]
 
     public virtual Ksiazka? IdKsiazkaNavigation { get; set; }
 
