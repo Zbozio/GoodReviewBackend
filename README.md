@@ -6,6 +6,7 @@ Features:
 Recommendation Algorithms:
 
 Cosine Similarity: Calculates the similarity between books based on their feature vectors (such as genre, author, etc.).
+
 Collaborative Filtering (Author-based): Uses collaborative filtering to recommend books based on the user's preferences and historical ratings.
 User Authentication and Authorization:
 
