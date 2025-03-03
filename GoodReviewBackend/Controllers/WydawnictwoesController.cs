@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Wydawnictwoes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Wydawnictwo>>> GetWydawnictwos()
         {
             return await _context.Wydawnictwos.ToListAsync();
         }
 
-        // GET: api/Wydawnictwoes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Wydawnictwo>> GetWydawnictwo(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return wydawnictwo;
         }
 
-        // PUT: api/Wydawnictwoes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWydawnictwo(int id, Wydawnictwo wydawnictwo)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Wydawnictwoes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+      
         [HttpPost]
         public async Task<ActionResult<Wydawnictwo>> PostWydawnictwo(Wydawnictwo wydawnictwo)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetWydawnictwo", new { id = wydawnictwo.IdWydawnictwa }, wydawnictwo);
         }
 
-        // DELETE: api/Wydawnictwoes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWydawnictwo(int id)
         {

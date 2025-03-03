@@ -13,17 +13,16 @@ public class KsiazkiUzytkownikaService
         _context = context;
     }
 
-    // Przykładowa metoda do pobierania książek z ocenami użytkownika
     public async Task<List<KsiazkaDto>> GetBooksByUserIdAsync(int userId)
     {
         var books = await _context.Ocenas
-            .Where(o => o.IdUzytkownik == userId)  // Filtrujemy książki przypisane do danego użytkownika
-            .Include(o => o.IdKsiazkaNavigation)   // Łączymy z tabelą książek (IdKsiazkaNavigation to nawigacja do książki)
+            .Where(o => o.IdUzytkownik == userId) 
+            .Include(o => o.IdKsiazkaNavigation)   
             .Select(o => new KsiazkaDto
             {
-                IdKsiazka = o.IdKsiazkaNavigation.IdKsiazka,           // Identyfikator książki
-                Tytul = o.IdKsiazkaNavigation.Tytul,            // Tytuł książki
-                Okladka = o.IdKsiazkaNavigation.Okladka,        // Okładka książki (jeśli istnieje)
+                IdKsiazka = o.IdKsiazkaNavigation.IdKsiazka,          
+                Tytul = o.IdKsiazkaNavigation.Tytul,           
+                Okladka = o.IdKsiazkaNavigation.Okladka,       
             })
             .ToListAsync();
 

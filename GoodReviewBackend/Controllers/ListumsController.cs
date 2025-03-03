@@ -39,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return listum;
         }
 
-        // PUT: api/Listums/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutListum(int id, Listum listum)
         {
@@ -70,8 +69,6 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Listums
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Listum>> PostListum(Listum listum)
         {
@@ -81,7 +78,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetListum", new { id = listum.IdListy }, listum);
         }
 
-        // DELETE: api/Listums/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteListum(int id)
         {
@@ -96,7 +92,6 @@ namespace GoodReviewBackend.Controllers
 
             return NoContent();
         }
-        // GET: api/Listums/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Listum>>> GetListsForUser(int userId)
         {

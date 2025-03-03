@@ -21,11 +21,10 @@ namespace GoodReviewBackend.DTOs
 
         public int? IloscOcenionychKsiazek { get; set; }
 
-        // Tylko dla rejestracji użytkownika
         public string? Haslo { get; set; }
         public DateTime? DataUrodzenia { get; set; }
 
-            public List<int> GatunkiIds { get; set; } // Lista ID wybranych gatunków
+            public List<int> GatunkiIds { get; set; } 
 
     }
 }

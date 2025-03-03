@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         } 
 
-        // GET: api/Poleceniums
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Polecenium>>> GetPolecenia()
         {
             return await _context.Polecenia.ToListAsync();
         }
 
-        // GET: api/Poleceniums/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Polecenium>> GetPolecenium(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return polecenium;
         }
 
-        // PUT: api/Poleceniums/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPolecenium(int id, Polecenium polecenium)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Poleceniums
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<Polecenium>> PostPolecenium(Polecenium polecenium)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetPolecenium", new { id = polecenium.IdPolecenia }, polecenium);
         }
 
-        // DELETE: api/Poleceniums/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePolecenium(int id)
         {

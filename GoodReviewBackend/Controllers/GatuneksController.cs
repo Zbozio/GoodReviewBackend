@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Gatuneks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Gatunek>>> GetGatuneks()
         {
             return await _context.Gatuneks.ToListAsync();
         }
 
-        // GET: api/Gatuneks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Gatunek>> GetGatunek(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return gatunek;
         }
 
-        // PUT: api/Gatuneks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGatunek(int id, Gatunek gatunek)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Gatuneks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<Gatunek>> PostGatunek(Gatunek gatunek)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetGatunek", new { id = gatunek.IdGatunku }, gatunek);
         }
 
-        // DELETE: api/Gatuneks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGatunek(int id)
         {
@@ -103,7 +98,7 @@ namespace GoodReviewBackend.Controllers
         public async Task<ActionResult<IEnumerable<Ksiazka>>> GetKsiazkiByGatunek(int id)
         {
             var gatunek = await _context.Gatuneks
-                .Include(g => g.IdKsiazkas) // Dołączamy powiązane książki
+                .Include(g => g.IdKsiazkas) 
                 .FirstOrDefaultAsync(g => g.IdGatunku == id);
 
             if (gatunek == null)
@@ -111,7 +106,7 @@ namespace GoodReviewBackend.Controllers
                 return NotFound();
             }
 
-            return Ok(gatunek.IdKsiazkas); // Zwracamy książki powiązane z gatunkiem
+            return Ok(gatunek.IdKsiazkas); 
         }
 
         private bool GatunekExists(int id)

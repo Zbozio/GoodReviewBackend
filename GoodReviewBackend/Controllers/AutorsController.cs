@@ -20,7 +20,6 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Autors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Autor>>> GetAutors()
         {
@@ -30,14 +29,12 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAutor(int id)
         {
-            // Znajdź autora
             var autor = await _context.Autors.FindAsync(id);
             if (autor == null)
             {
                 return NotFound();
             }
 
-            // Pobierz dane powiązane
             var booksWithDetails = await _context.Udzials
                 .Where(u => u.IdAutora == id)
                 .Join(_context.Ksiazkas,
@@ -51,7 +48,6 @@ namespace GoodReviewBackend.Controllers
                       })
                 .ToListAsync();
 
-            // Zwróć odpowiedź jako dane autora i powiązane książki
             return Ok(new
             {
                 IdAutora = autor.IdAutora,
@@ -68,8 +64,7 @@ namespace GoodReviewBackend.Controllers
 
 
 
-        // PUT: api/Autors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAutor(int id, Autor autor)
         {
@@ -99,8 +94,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Autors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<Autor>> PostAutor(Autor autor)
         {
@@ -110,7 +104,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetAutor", new { id = autor.IdAutora }, autor);
         }
 
-        // DELETE: api/Autors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAutor(int id)
         {
@@ -125,7 +118,6 @@ namespace GoodReviewBackend.Controllers
 
             return NoContent();
         }
-        // GET: api/Autors/search?query=authorName
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Autor>>> SearchAuthors(string query)
         {

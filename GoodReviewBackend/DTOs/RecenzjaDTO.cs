@@ -8,12 +8,10 @@
     public DateTime DataRecenzji { get; set; }
     public int PolubieniaRecenzji { get; set; }
 
-    // Informacje o użytkowniku
     public string? UzytkownikImie { get; set; }
     public string? UzytkownikNazwisko { get; set; }
     public string? UzytkownikZdjecie { get; set; }
 
-    // Informacje o książce
     public string?  KsiazkaTytul { get; set; }
     public string? KsiazkaOkladka { get; set; }
 }

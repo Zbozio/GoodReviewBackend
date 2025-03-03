@@ -7,13 +7,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Rejestracja serwisów
-builder.Services.AddScoped<IAuthService, AuthService>(); // Rejestracja AuthService
-builder.Services.AddScoped<PasswordHasherService>();   // Rejestracja PasswordHasherService
+builder.Services.AddScoped<IAuthService, AuthService>(); 
+builder.Services.AddScoped<PasswordHasherService>();   
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<KsiazkiUzytkownikaService>();
 
-// Dodajemy konfiguracjê JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -23,27 +21,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"], // Wartoœæ dla Issuera
-            ValidAudience = builder.Configuration["Jwt:Audience"], // Wartoœæ dla Audience
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) // Klucz
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
-// Rejestracja DbContext
 builder.Services.AddDbContext<GoodReviewDatabaseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // ConnectionString z konfiguracji
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
 
-// Rejestracja pozosta³ych us³ug
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Konfiguracja CORS (zezwolenie na dostêp z aplikacji Angular)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Adres aplikacji Angular
+        policy.WithOrigins("http://localhost:4200") 
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -51,10 +46,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Uruchomienie procesu aktualizacji hase³ w ramach cyklu ¿ycia aplikacji (scoped)
 
 
-// Middleware dla Swaggera w trybie deweloperskim
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -62,11 +55,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAngularApp"); // W³¹czenie CORS
+app.UseCors("AllowAngularApp"); 
 
-app.UseAuthentication();  // Middleware dla autentykacji JWT
-app.UseAuthorization();   // Middleware dla autoryzacji
+app.UseAuthentication();  
+app.UseAuthorization();   
 
-app.MapControllers(); // Mapowanie kontrolerów
-
+app.MapControllers();
 app.Run();

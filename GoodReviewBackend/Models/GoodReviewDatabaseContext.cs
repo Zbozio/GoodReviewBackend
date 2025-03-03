@@ -100,11 +100,10 @@ public partial class GoodReviewDatabaseContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("NAZWA_GATUNKU");
 
-            // Relacja wiele do wielu z Ksiazka
             entity.HasMany(d => d.IdKsiazkas)
                 .WithMany(p => p.IdGatunkus)
                 .UsingEntity<Dictionary<string, object>>(
-                    "Gatunkowosc",  // Tabela pośrednia
+                    "Gatunkowosc", 
                     r => r.HasOne<Ksiazka>().WithMany().HasForeignKey("IdKsiazka"),
                     l => l.HasOne<Gatunek>().WithMany().HasForeignKey("IdGatunku"),
                     j =>
@@ -117,11 +116,10 @@ public partial class GoodReviewDatabaseContext : DbContext
                         j.IndexerProperty<int>("IdKsiazka").HasColumnName("ID_KSIAZKA");
                     });
 
-            // Relacja wiele do wielu z Uzytkownik
             entity.HasMany(d => d.IdUzytkowniks)
                 .WithMany(p => p.IdGatunkus)
                 .UsingEntity<Dictionary<string, object>>(
-                    "UlubioneGatunki",  // Tabela pośrednia dla użytkowników
+                    "UlubioneGatunki",  
                     r => r.HasOne<Uzytkownik>().WithMany().HasForeignKey("IdUzytkownik"),
                     l => l.HasOne<Gatunek>().WithMany().HasForeignKey("IdGatunku"),
                     j =>

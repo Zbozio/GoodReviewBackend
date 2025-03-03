@@ -20,13 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Recenzjas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetRecenzjas()
         {
             var recenzje = await _context.Recenzjas
-                .Include(r => r.IdUzytkownikNavigation) // Join user data
-                .Include(r => r.IdKsiazkaNavigation)   // Join book data
+                .Include(r => r.IdUzytkownikNavigation) 
+                .Include(r => r.IdKsiazkaNavigation)   
                 .Select(r => new
                 {
                     r.IdRecenzji,
@@ -49,13 +48,12 @@ namespace GoodReviewBackend.Controllers
             return Ok(recenzje);
         }
 
-        // GET: api/Recenzjas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetRecenzja(int id)
         {
             var recenzja = await _context.Recenzjas
-                .Include(r => r.IdUzytkownikNavigation) // Join user data
-                .Include(r => r.IdKsiazkaNavigation)   // Join book data
+                .Include(r => r.IdUzytkownikNavigation) 
+                .Include(r => r.IdKsiazkaNavigation)   
                 .Where(r => r.IdRecenzji == id)
                 .Select(r => new
                 {
@@ -79,15 +77,14 @@ namespace GoodReviewBackend.Controllers
             return Ok(recenzja);
         }
 
-        // GET: api/Recenzjas/Uzytkownik/50
         [HttpGet("Uzytkownik/{idUzytkownik}")]
         public async Task<ActionResult<IEnumerable<object>>> GetRecenzjeByUzytkownik(int idUzytkownik)
         {
             var recenzje = await _context.Recenzjas
-    .Include(r => r.IdUzytkownikNavigation) // Join user data
-    .Include(r => r.IdKsiazkaNavigation) // Join book data
-    .Include(r => r.Komentarzs) // Join comments
-    .ThenInclude(k => k.IdUzytkownikNavigation) // Include user data for each comment
+    .Include(r => r.IdUzytkownikNavigation) 
+    .Include(r => r.IdKsiazkaNavigation) 
+    .Include(r => r.Komentarzs)
+    .ThenInclude(k => k.IdUzytkownikNavigation) 
     .Where(r => r.IdUzytkownik == idUzytkownik)
     .Select(r => new
     {
@@ -109,7 +106,7 @@ namespace GoodReviewBackend.Controllers
             UserImie = k.IdUzytkownikNavigation.Imie,
             UserNazwisko = k.IdUzytkownikNavigation.Nazwisko,
             UserZdjecie = k.IdUzytkownikNavigation.Zdjecie
-        }).ToList() // Include comments with user data
+        }).ToList() 
     }).ToListAsync();
 
 
@@ -121,13 +118,12 @@ namespace GoodReviewBackend.Controllers
             return Ok(recenzje);
         }
 
-        // GET: api/Recenzjas/Ksiazka/10
         [HttpGet("Ksiazka/{idKsiazka}")]
         public async Task<ActionResult<IEnumerable<object>>> GetRecenzjeByKsiazka(int idKsiazka)
         {
             var recenzje = await _context.Recenzjas
-                .Include(r => r.IdUzytkownikNavigation) // Join user data
-                .Include(r => r.IdKsiazkaNavigation)   // Join book data
+                .Include(r => r.IdUzytkownikNavigation) 
+                .Include(r => r.IdKsiazkaNavigation)   
                 .Where(r => r.IdKsiazka == idKsiazka)
                 .Select(r => new
                 {
@@ -153,7 +149,6 @@ namespace GoodReviewBackend.Controllers
             return Ok(recenzje);
         }
 
-        // PUT: api/Recenzjas/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRecenzja(int id, Recenzja recenzja)
         {
@@ -183,11 +178,9 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Recenzjas
         [HttpPost]
         public async Task<ActionResult<Recenzja>> PostRecenzja(Recenzja recenzja)
         {
-            // Sprawdzenie, czy użytkownik już dodał recenzję dla tej książki
             var existingReview = await _context.Recenzjas
                 .FirstOrDefaultAsync(r => r.IdUzytkownik == recenzja.IdUzytkownik && r.IdKsiazka == recenzja.IdKsiazka);
 
@@ -196,7 +189,6 @@ namespace GoodReviewBackend.Controllers
                 return BadRequest("Użytkownik już dodał recenzję dla tej książki.");
             }
 
-            // Dodanie recenzji do bazy danych
             _context.Recenzjas.Add(recenzja);
             await _context.SaveChangesAsync();
 
@@ -204,7 +196,6 @@ namespace GoodReviewBackend.Controllers
         }
 
 
-        // DELETE: api/Recenzjas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecenzja(int id)
         {

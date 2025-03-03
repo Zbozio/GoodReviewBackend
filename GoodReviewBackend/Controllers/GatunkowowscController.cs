@@ -17,12 +17,11 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // Endpoint zwracający książki z powiązanymi gatunkami
         [HttpGet("books-with-genres")]
         public async Task<IActionResult> GetBooksWithGenres()
         {
             var booksWithGenres = await _context.Ksiazkas
-                .Include(k => k.IdGatunkus)  // Ładowanie gatunków przypisanych do książek
+                .Include(k => k.IdGatunkus) 
                 .Select(k => new
                 {
                     k.IdKsiazka,
@@ -30,8 +29,8 @@ namespace GoodReviewBackend.Controllers
                     k.Opis,
                     Genres = k.IdGatunkus.Select(g => new
                     {
-                        g.IdGatunku,          // Dodanie id gatunku
-                        g.NazwaGatunku       // Nazwa gatunku
+                        g.IdGatunku,          
+                        g.NazwaGatunku       
                     }).ToList()
                 })
                 .ToListAsync();
@@ -39,20 +38,20 @@ namespace GoodReviewBackend.Controllers
             return Ok(booksWithGenres);
         }
 
-        // Endpoint zwracający gatunki z przypisanymi książkami
+        
         [HttpGet("genres-with-books")]
         public async Task<IActionResult> GetGenresWithBooks()
         {
             var genresWithBooks = await _context.Gatuneks
-                .Include(g => g.IdKsiazkas)  // Ładowanie książek przypisanych do gatunków
+                .Include(g => g.IdKsiazkas) 
                 .Select(g => new
                 {
-                    g.IdGatunku,                // Dodanie id gatunku
+                    g.IdGatunku,                
                     g.NazwaGatunku,
                     Books = g.IdKsiazkas.Select(k => new
                     {   
                         k.IdKsiazka,
-                        k.Tytul                   // Zwracanie tytułów książek
+                        k.Tytul                   
                     }).ToList()
                 })
                 .ToListAsync();
@@ -60,13 +59,12 @@ namespace GoodReviewBackend.Controllers
             return Ok(genresWithBooks);
         }
 
-        // Endpoint zwracający gatunki dla podanej książki
         [HttpGet("books/{id}/genres")]
         public async Task<IActionResult> GetGenresForBook(int id)
         {
             var bookWithGenres = await _context.Ksiazkas
                 .Where(k => k.IdKsiazka == id)
-                .Include(k => k.IdGatunkus)  // Ładowanie gatunków przypisanych do książki
+                .Include(k => k.IdGatunkus)  
                 .Select(k => new
                 {
                     k.IdKsiazka,
@@ -74,8 +72,8 @@ namespace GoodReviewBackend.Controllers
                     k.Opis,
                     Genres = k.IdGatunkus.Select(g => new
                     {
-                        g.IdGatunku,          // Dodanie id gatunku
-                        g.NazwaGatunku       // Nazwa gatunku
+                        g.IdGatunku,          
+                        g.NazwaGatunku      
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
@@ -88,13 +86,12 @@ namespace GoodReviewBackend.Controllers
             return Ok(bookWithGenres);
         }
 
-        // Endpoint zwracający książki dla podanego gatunku
         [HttpGet("genres/{id}/books")]
         public async Task<IActionResult> GetBooksForGenre(int id)
         {
             var genreWithBooks = await _context.Gatuneks
                 .Where(g => g.IdGatunku == id)
-                .Include(g => g.IdKsiazkas)  // Ładowanie książek przypisanych do gatunku
+                .Include(g => g.IdKsiazkas)  
                 .Select(g => new
                 {
                     g.NazwaGatunku,
@@ -102,7 +99,7 @@ namespace GoodReviewBackend.Controllers
                     {
                         k.IdKsiazka,
                         k.Tytul,
-                        k.Okladka  // Dodaj URL zdjęcia okładki książki
+                        k.Okladka 
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();

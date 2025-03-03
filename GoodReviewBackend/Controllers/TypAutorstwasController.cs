@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/TypAutorstwas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TypAutorstwa>>> GetTypAutorstwas()
         {
             return await _context.TypAutorstwas.ToListAsync();
         }
 
-        // GET: api/TypAutorstwas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TypAutorstwa>> GetTypAutorstwa(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return typAutorstwa;
         }
 
-        // PUT: api/TypAutorstwas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTypAutorstwa(int id, TypAutorstwa typAutorstwa)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/TypAutorstwas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<TypAutorstwa>> PostTypAutorstwa(TypAutorstwa typAutorstwa)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetTypAutorstwa", new { id = typAutorstwa.IdTypu }, typAutorstwa);
         }
 
-        // DELETE: api/TypAutorstwas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTypAutorstwa(int id)
         {

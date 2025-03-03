@@ -20,13 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Ocenas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetOcenas()
         {
             var ocenyWithBooksAndGenres = await _context.Ocenas
-                .Include(o => o.IdKsiazkaNavigation)  // Dołączamy książki związane z ocenami
-                    .ThenInclude(k => k.IdGatunkus)  // Dołączamy gatunki książek
+                .Include(o => o.IdKsiazkaNavigation) 
+                    .ThenInclude(k => k.IdGatunkus)  
                 .Select(o => new
                 {
                     o.IdOceny,
@@ -50,10 +49,10 @@ namespace GoodReviewBackend.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetUserRatingsSorted(int userId)
         {
             var userRatingsWithBooksAndGenres = await _context.Ocenas
-                .Where(o => o.IdUzytkownik == userId)  // Filtrujemy po IdUzytkownik
-                .Include(o => o.IdKsiazkaNavigation)  // Dołączamy książki związane z ocenami
-                    .ThenInclude(k => k.IdGatunkus)  // Dołączamy gatunki książek
-                .OrderByDescending(o => o.WartoscOceny)  // Sortujemy oceny od najwyższej do najniższej
+                .Where(o => o.IdUzytkownik == userId)  
+                .Include(o => o.IdKsiazkaNavigation)  
+                    .ThenInclude(k => k.IdGatunkus)  
+                .OrderByDescending(o => o.WartoscOceny)  
                 .Select(o => new
                 {
                     o.IdOceny,
@@ -136,12 +135,11 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("UserRatings/{userId}")]
         public async Task<ActionResult<IEnumerable<object>>> GetUserRatings(int userId)
         {
-            // Pobieramy oceny użytkownika, a także powiązane informacje o książkach i użytkownikach
             var userRatings = await _context.Ocenas
                 .Where(o => o.IdUzytkownik == userId)
-                .Include(o => o.IdKsiazkaNavigation)  // Dołączamy dane o książce przez właściwość nawigacyjną
-                    .ThenInclude(k => k.IdGatunkus)  // Dołączamy powiązane gatunki książki
-                .Include(o => o.IdUzytkownikNavigation)  // Dołączamy dane o użytkowniku
+                .Include(o => o.IdKsiazkaNavigation)  
+                    .ThenInclude(k => k.IdGatunkus)  
+                .Include(o => o.IdUzytkownikNavigation)  
                 .ToListAsync();
 
             if (userRatings == null || userRatings.Count == 0)
@@ -149,7 +147,6 @@ namespace GoodReviewBackend.Controllers
                 return NotFound($"No ratings found for user with ID {userId}");
             }
 
-            // Nowa lista, która zwróci tytuł książki, zdjęcie użytkownika, okładkę książki i powiązane gatunki
             var ratingsWithBookData = userRatings.Select(o => new
             {
                 o.IdOceny,
@@ -219,18 +216,14 @@ namespace GoodReviewBackend.Controllers
             var recommendations = unratedBooks
                 .Select(book =>
                 {
-                    // Punkty za występujące gatunki
                     var genreScore = book.IdGatunkus
                         .Where(g => genrePoints.ContainsKey(g.IdGatunku))
                         .Sum(g => genrePoints[g.IdGatunku]);
 
-                    // Punkty za zbliżoność do średniej ilości stron
                     var pageScore = book.IloscStron.HasValue ? GetPageScore(book.IloscStron.Value, (double)averagePages) : 0;
 
-                    // Punkty za występowanie autora
                     var authorBonus = book.Udzials.Any(u => highRatedAuthors.Contains(u.IdAutora)) ? 0.2 : 0;
 
-                    // Średnia ocena użytkowników dla danej książki
                     var averageRating = _context.Ocenas
                         .Where(r => r.IdKsiazka == book.IdKsiazka)
                         .Average(r => (double?)r.WartoscOceny) ?? 0;
@@ -278,7 +271,6 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("UserRecommendationsMatrix/{userId}")]
         public async Task<ActionResult<IEnumerable<object>>> GetUserRecommendationsMatrix(int userId)
         {
-            // Pobierz oceny użytkownika wraz z książkami i ich gatunkami
             var userRatings = await _context.Ocenas
                 .Where(o => o.IdUzytkownik == userId)
                 .Include(o => o.IdKsiazkaNavigation)
@@ -330,7 +322,6 @@ namespace GoodReviewBackend.Controllers
 
                     double magnitudeA = Math.Sqrt(bookFeatures.Sum(f => f * f));
 
-                    // Obliczanie podobieństwa cosinusowego
                     double similarity = (magnitudeA > 0 && magnitudeB > 0)
                         ? dotProduct / (magnitudeA * magnitudeB)
                         : 0;
@@ -349,8 +340,8 @@ namespace GoodReviewBackend.Controllers
                         Pages = book.IloscStron
                     };
                 })
-                .OrderByDescending(r => r.SimilarityScore) // Sortuj według podobieństwa
-                .Take(6) // Wybierz 5 najlepszych książek
+                .OrderByDescending(r => r.SimilarityScore)
+                .Take(6) 
                 .ToList();
 
 

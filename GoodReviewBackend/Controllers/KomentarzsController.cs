@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Komentarzs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Komentarz>>> GetKomentarzs()
         {
             return await _context.Komentarzs.ToListAsync();
         }
 
-        // GET: api/Komentarzs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Komentarz>> GetKomentarz(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return komentarz;
         }
 
-        // PUT: api/Komentarzs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutKomentarz(int id, Komentarz komentarz)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Komentarzs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<Komentarz>> PostKomentarz(Komentarz komentarz)
         {
@@ -85,9 +81,8 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("review/{reviewId}")]
         public async Task<ActionResult<IEnumerable<Komentarz>>> GetCommentsByReview(int reviewId)
         {
-            // Wyszukaj komentarze, które są przypisane do konkretnej recenzji
             var komentarze = await _context.Komentarzs
-                .Where(k => k.IdRecenzji == reviewId)  // Filtrowanie po ID recenzji
+                .Where(k => k.IdRecenzji == reviewId)  
                 .ToListAsync();
 
             if (komentarze == null || komentarze.Count == 0)
@@ -95,9 +90,8 @@ namespace GoodReviewBackend.Controllers
                 return NotFound("No comments found for this review.");
             }
 
-            return Ok(komentarze);  // Zwróć komentarze
+            return Ok(komentarze);  
         }
-        // DELETE: api/Komentarzs/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKomentarz(int id)
         {

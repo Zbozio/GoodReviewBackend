@@ -14,11 +14,10 @@ public class KsiazkiUzytkownikaController : ControllerBase
         _ksiazkaService = ksiazkaService;
     }
 
-    // Endpoint do pobrania książek użytkownika
     [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetBooksByUserId([FromRoute] int userId) // [FromRoute] wskazuje, że parametr jest w URL
+    public async Task<IActionResult> GetBooksByUserId([FromRoute] int userId) 
     {
         var books = await _ksiazkaService.GetBooksByUserIdAsync(userId);
-        return Ok(books);  // Zwracamy książki użytkownika
+        return Ok(books);  
     }
 }

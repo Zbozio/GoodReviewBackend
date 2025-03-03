@@ -18,14 +18,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // Metoda sprawdzająca, czy użytkownik ma rolę admina
         [HttpGet("panel/{userId}")]
-        [Authorize] // Tylko zalogowani użytkownicy mogą uzyskać dostęp
+        [Authorize] 
         public async Task<IActionResult> GetAdminPanel(int userId)
         {
-            // Jeśli chcesz sprawdzić rolę użytkownika w bazie, możesz pobrać jego dane na podstawie userId przekazanego w URL
             var user = await _context.Uzytkowniks
-                .Include(u => u.IdOceny2Navigation) // Załóżmy, że masz relację z tabelą Rola
+                .Include(u => u.IdOceny2Navigation) 
                 .FirstOrDefaultAsync(u => u.IdUzytkownik == userId);
 
             if (user == null)
@@ -33,16 +31,13 @@ namespace GoodReviewBackend.Controllers
                 return NotFound(new { Message = "Użytkownik nie znaleziony." });
             }
 
-            // Sprawdzenie, czy użytkownik ma rolę 'admin' (IdOceny2 == 1)
             if (user.IdOceny2 == 1)
             {
-                // Jeśli użytkownik jest adminem, udzielamy dostępu do panelu admina
                 return Ok(new { Message = "Witaj w panelu administracyjnym!" });
             }
             else
             {
-                // Jeśli użytkownik nie jest adminem, odmawiamy dostępu
-                return Forbid(); // Zwraca 403 Forbidden
+                return Forbid(); 
             }
         }
     }

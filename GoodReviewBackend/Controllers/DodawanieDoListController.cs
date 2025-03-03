@@ -17,18 +17,17 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // Endpoint zwracający listy z przypisanymi książkami dla konkretnego użytkownika
         [HttpGet("user/{userId}/lists-with-books")]
         public async Task<IActionResult> GetListsWithBooksForUser(int userId)
         {
             var listsWithBooks = await _context.Lista
-                .Where(l => l.IdUzytkownik == userId) // Filtruj listy po ID użytkownika
-                .Include(l => l.IdKsiazkas) // Ładowanie książek przypisanych do list
+                .Where(l => l.IdUzytkownik == userId) 
+                .Include(l => l.IdKsiazkas) 
                 .Select(l => new
                 {
                     l.IdListy,
                     l.NazwaListy,
-                    l.IdUzytkownik, // Zwróć ID użytkownika
+                    l.IdUzytkownik, 
                     Books = l.IdKsiazkas.Select(k => new
                     {
                         k.IdKsiazka,
@@ -40,13 +39,12 @@ namespace GoodReviewBackend.Controllers
 
             return Ok(listsWithBooks);
         }
-        // Endpoint zwracający książki dla konkretnej listy
         [HttpGet("list/{listId}/books")]
         public async Task<IActionResult> GetBooksInList(int listId)
         {
             var listWithBooks = await _context.Lista
-                .Where(l => l.IdListy == listId)  // Filtrujemy po ID listy
-                .Include(l => l.IdKsiazkas)  // Ładujemy książki przypisane do listy
+                .Where(l => l.IdListy == listId) 
+                .Include(l => l.IdKsiazkas)  
                 .Select(l => new
                 {
                     l.IdListy,
@@ -69,7 +67,6 @@ namespace GoodReviewBackend.Controllers
         }
 
 
-        // Endpoint dodający książkę do listy użytkownika
         [HttpPost("add-book-to-list")]
         public async Task<IActionResult> AddBookToList([FromBody] AddBookToListRequest request)
         {
@@ -87,7 +84,6 @@ namespace GoodReviewBackend.Controllers
                 return NotFound(new { message = "Book not found." });
             }
 
-            // Sprawdzenie, czy książka już jest na liście
             if (list.IdKsiazkas.Any(b => b.IdKsiazka == request.BookId))
             {
                 return Conflict(new { message = "Book already exists in the list." });
@@ -99,7 +95,6 @@ namespace GoodReviewBackend.Controllers
             return Ok(new { message = "Book added to the list." });
         }
 
-        // Endpoint usuwający książkę z listy użytkownika
         [HttpDelete("remove-book-from-list/{userId}/{listId}/{bookId}")]
         public async Task<IActionResult> RemoveBookFromList(int userId, int listId, int bookId)
         {
@@ -125,11 +120,10 @@ namespace GoodReviewBackend.Controllers
         }
     }
 
-    // Model pomocniczy do dodawania książki do listy
     public class AddBookToListRequest
     {
-        public int UserId { get; set; }  // ID użytkownika
-        public int ListId { get; set; } // ID listy
-        public int BookId { get; set; } // ID książki
+        public int UserId { get; set; } 
+        public int ListId { get; set; } 
+        public int BookId { get; set; } 
     }
 }

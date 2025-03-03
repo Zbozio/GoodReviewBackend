@@ -25,7 +25,6 @@ namespace GoodReviewBackend.Controllers
 
             try
             {
-                // Sprawdzenie, czy książka już istnieje na podstawie ISBN
                 var existingBook = await _context.Ksiazkas
                     .FirstOrDefaultAsync(b => b.Isbn == bookDto.Isbn);
                 if (existingBook != null)
@@ -33,14 +32,12 @@ namespace GoodReviewBackend.Controllers
                     return Conflict(new { Message = "Book with this ISBN already exists." });
                 }
 
-                // Sprawdzenie, czy wydawnictwo istnieje
                 var publisher = await _context.Wydawnictwos.FindAsync(bookDto.PublisherId);
                 if (publisher == null)
                 {
                     return BadRequest(new { Message = $"Publisher with ID {bookDto.PublisherId} does not exist." });
                 }
 
-                // Tworzenie nowej książki
                 var newBook = new Ksiazka
                 {
                     Tytul = bookDto.Title,
@@ -54,7 +51,6 @@ namespace GoodReviewBackend.Controllers
                 _context.Ksiazkas.Add(newBook);
                 await _context.SaveChangesAsync();
 
-                // Dodanie gatunków do książki
                 foreach (var genreId in bookDto.GenreIds)
                 {
                     var genre = await _context.Gatuneks.FindAsync(genreId);
@@ -64,10 +60,8 @@ namespace GoodReviewBackend.Controllers
                     }
                 }
 
-                // Dodanie autorów i ról
                 foreach (var authorDto in bookDto.Authors)
                 {
-                    // Sprawdzanie, czy autor istnieje po ID
                     var author = await _context.Autors
                         .FirstOrDefaultAsync(a => a.IdAutora == authorDto.AuthorId);
                     if (author == null)
@@ -95,7 +89,6 @@ namespace GoodReviewBackend.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                // Pobranie pełnych danych książki z autorami
                 var addedBook = await _context.Ksiazkas
                     .Include(b => b.IdWydawnictwaNavigation)
                     .Include(b => b.IdGatunkus)
@@ -105,7 +98,6 @@ namespace GoodReviewBackend.Controllers
                         .ThenInclude(u => u.IdTypuNavigation)
                     .FirstOrDefaultAsync(b => b.IdKsiazka == newBook.IdKsiazka);
 
-                // Przygotowanie odpowiedzi z pełnymi danymi książki i autorami
                 var bookResponse = new
                 {
                     addedBook.IdKsiazka,
@@ -136,7 +128,6 @@ namespace GoodReviewBackend.Controllers
             }
         }
 
-        // GET: api/AddingBook/roles
         [HttpGet("roles")]
         public async Task<IActionResult> GetRoles()
         {
@@ -150,8 +141,6 @@ namespace GoodReviewBackend.Controllers
 
 
 
-// DTO do przesyłania danych książki
-// DTO do przesyłania danych książki
 public class BookDto
     {
         public string Title { get; set; }
@@ -160,15 +149,15 @@ public class BookDto
         public int Pages { get; set; }
         public string Cover { get; set; }
         public string Isbn { get; set; }
-        public int PublisherId { get; set; } // Zmienione z PublisherName na PublisherId
+        public int PublisherId { get; set; } 
         public List<int> GenreIds { get; set; } = new List<int>();
         public List<AuthorDto> Authors { get; set; } = new List<AuthorDto>();
 
         public class AuthorDto
         {
-            public int AuthorId { get; set; } // ID autora
-            public int AuthorshipTypeId { get; set; } // ID typu autorstwa
-            public int ContributionValue { get; set; } // Wartość udziału
+            public int AuthorId { get; set; }
+            public int AuthorshipTypeId { get; set; } 
+            public int ContributionValue { get; set; } 
         }
     }
 

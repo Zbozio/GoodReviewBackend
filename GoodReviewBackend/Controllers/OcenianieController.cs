@@ -17,37 +17,31 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // POST: api/Ocenianie
         [HttpPost]
         public async Task<IActionResult> RateBook([FromBody] Ocena ratingRequest)
         {
-            // Walidacja wartości oceny
             if (ratingRequest.WartoscOceny < 1 || ratingRequest.WartoscOceny > 10)
             {
                 return BadRequest("Rating value must be between 1 and 10.");
             }
 
-            // Walidacja obecności wymaganych pól
             if (ratingRequest.IdKsiazka == null || ratingRequest.IdUzytkownik == null)
             {
                 return BadRequest("Book ID and User ID must be provided.");
             }
 
-            // Sprawdź, czy użytkownik już ocenił tę książkę
             var existingRating = await _context.Ocenas
                 .FirstOrDefaultAsync(o => o.IdKsiazka == ratingRequest.IdKsiazka
                                            && o.IdUzytkownik == ratingRequest.IdUzytkownik);
 
             if (existingRating != null)
             {
-                // Aktualizacja istniejącej oceny
                 existingRating.WartoscOceny = ratingRequest.WartoscOceny;
                 existingRating.DataOceny = DateTime.UtcNow;
                 _context.Entry(existingRating).State = EntityState.Modified;
             }
             else
             {
-                // Dodanie nowej oceny
                 var newRating = new Ocena
                 {
                     IdKsiazka = ratingRequest.IdKsiazka,
@@ -65,7 +59,6 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("{idKsiazka}/{idUzytkownik}")]
         public async Task<IActionResult> GetRating(int idKsiazka, int idUzytkownik)
         {
-            // Sprawdź, czy ocena dla danej książki i użytkownika istnieje
             var rating = await _context.Ocenas
                 .FirstOrDefaultAsync(o => o.IdKsiazka == idKsiazka && o.IdUzytkownik == idUzytkownik);
 

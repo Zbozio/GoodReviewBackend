@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Rolas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rola>>> GetRolas()
         {
             return await _context.Rolas.ToListAsync();
         }
 
-        // GET: api/Rolas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Rola>> GetRola(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return rola;
         }
 
-        // PUT: api/Rolas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRola(int id, Rola rola)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Rolas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<Rola>> PostRola(Rola rola)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetRola", new { id = rola.IdOceny2 }, rola);
         }
 
-        // DELETE: api/Rolas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRola(int id)
         {

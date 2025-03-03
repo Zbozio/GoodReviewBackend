@@ -17,11 +17,9 @@ namespace GoodReviewBackend.Controllers
             _registrationService = registrationService;
         }
 
-        // Endpoint do rejestracji
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UzytkownikDTO userDto)
         {
-            // Zabezpieczenie przed pustym emailem lub hasłem
             if (string.IsNullOrEmpty(userDto.EMail) || string.IsNullOrEmpty(userDto.Haslo))
             {
                 return BadRequest("Email i hasło są wymagane.");
@@ -29,10 +27,8 @@ namespace GoodReviewBackend.Controllers
 
             
 
-            // Rejestracja użytkownika
             await _registrationService.RegisterUserAsync(userDto);
 
-            // Zwrócenie odpowiedzi z komunikatem
             return Ok(new { message = "Użytkownik został zarejestrowany!" });
         }
     }

@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/Udzials
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Udzial>>> GetUdzials()
         {
             return await _context.Udzials.ToListAsync();
         }
 
-        // GET: api/Udzials/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Udzial>> GetUdzial(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return udzial;
         }
 
-        // PUT: api/Udzials/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUdzial(int id, Udzial udzial)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/Udzials
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<Udzial>> PostUdzial(Udzial udzial)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetUdzial", new { id = udzial.IdUdzialu }, udzial);
         }
 
-        // DELETE: api/Udzials/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUdzial(int id)
         {

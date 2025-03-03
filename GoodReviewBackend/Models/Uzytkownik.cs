@@ -29,8 +29,7 @@ public partial class Uzytkownik
 
     public string? Opis { get; set; }
 
-    // Nowa kolumna DataUrodzenia
-    public DateTime? DataUrodzenia { get; set; }  // Nullable, jeśli nie ma obowiązku podawania daty urodzenia
+    public DateTime? DataUrodzenia { get; set; }  
 
     public virtual Rola? IdOceny2Navigation { get; set; }
 

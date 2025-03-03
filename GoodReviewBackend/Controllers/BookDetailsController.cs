@@ -19,16 +19,15 @@ namespace GoodReviewBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult GetBookDetails(int id)
         {
-            // Pobieranie szczegółów książki wraz z powiązanymi tabelami
             var bookDetails = _context.Ksiazkas
-                .Include(b => b.IdWydawnictwaNavigation) // Wydawnictwo
-                .Include(b => b.IdGatunkus) // Gatunki
-                .Include(b => b.IdOceny5s) // Tagi
-                .Include(b => b.Ocenas) // Oceny
+                .Include(b => b.IdWydawnictwaNavigation) 
+                .Include(b => b.IdGatunkus) 
+                .Include(b => b.IdOceny5s) 
+                .Include(b => b.Ocenas) 
                 .Include(b => b.Udzials)
-                    .ThenInclude(u => u.IdAutoraNavigation) // Autorzy
+                    .ThenInclude(u => u.IdAutoraNavigation) 
                 .Include(b => b.Udzials)
-                    .ThenInclude(u => u.IdTypuNavigation) // Typ autorstwa
+                    .ThenInclude(u => u.IdTypuNavigation) 
                 .Where(b => b.IdKsiazka == id)
                 .Select(b => new
                 {
@@ -60,7 +59,6 @@ namespace GoodReviewBackend.Controllers
                     }),
 
 
-                    // Obliczanie średniej i liczby ocen
                     AverageRating = b.Ocenas.Any() ? Math.Round((decimal)b.Ocenas.Average(o => o.WartoscOceny), 1) : 0,
                     TotalRatings = b.Ocenas.Count()
                 })

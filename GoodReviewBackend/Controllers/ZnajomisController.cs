@@ -20,7 +20,6 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // POST: api/Znajomis/SendRequest
         [HttpPost("SendRequest")]
         public async Task<IActionResult> SendFriendRequest(int senderId, int recipientId)
         {
@@ -53,7 +52,6 @@ namespace GoodReviewBackend.Controllers
             return Ok("Zaproszenie zostało wysłane.");
         }
 
-        // POST: api/Znajomis/RespondToRequest
         [HttpPost("RespondToRequest")]
         public async Task<IActionResult> RespondToFriendRequest(int requestId, bool isAccepted)
         {
@@ -84,7 +82,6 @@ namespace GoodReviewBackend.Controllers
             }
         }
 
-        // GET: api/Znajomis/PendingRequests/5
         [HttpGet("PendingRequests/{userId}")]
         public async Task<IActionResult> GetPendingFriendRequests(int userId)
         {
@@ -94,8 +91,8 @@ namespace GoodReviewBackend.Controllers
                     z.StatusZnajomosci == "Pending")
                 .Select(z => new
                 {
-                    RequestId = z.IdZnajomosci, // ID zaproszenia
-                    SenderId = z.IdUzytkownik == userId ? z.UzyIdUzytkownik : z.IdUzytkownik, // Kto wysłał
+                    RequestId = z.IdZnajomosci, 
+                    SenderId = z.IdUzytkownik == userId ? z.UzyIdUzytkownik : z.IdUzytkownik, 
                     z.DataZnajomosci,
                     SenderDetails = z.IdUzytkownik == userId
                         ? new
@@ -115,7 +112,6 @@ namespace GoodReviewBackend.Controllers
 
             return Ok(pendingRequests);
         }
-        // DELETE: api/Znajomis/RemoveFriend/{friendshipId}
         [HttpDelete("RemoveFriend/{friendshipId}")]
         public async Task<IActionResult> RemoveFriend(int friendshipId)
         {
@@ -133,7 +129,6 @@ namespace GoodReviewBackend.Controllers
         }
 
 
-        // GET: api/Znajomis/UserFriends/5
         [HttpGet("UserFriends/{userId}")]
         public async Task<IActionResult> GetUserFriends(int userId)
         {
@@ -145,7 +140,7 @@ namespace GoodReviewBackend.Controllers
                 {
                     FriendId = z.IdUzytkownik == userId ? z.UzyIdUzytkownik : z.IdUzytkownik,
                     z.DataZnajomosci,
-                    z.IdZnajomosci,  // Dodajemy ID znajomości
+                    z.IdZnajomosci,  
                     FriendDetails = z.IdUzytkownik == userId
                         ? new
                         {
@@ -153,13 +148,11 @@ namespace GoodReviewBackend.Controllers
                             z.UzyIdUzytkownikNavigation.Nazwisko,
                             z.UzyIdUzytkownikNavigation.EMail,
                             z.UzyIdUzytkownikNavigation.Zdjecie,
-                            // Liczba ocenionych książek dla znajomego
                             IloscOcenionychKsiazek = _context.Ocenas
                                 .Where(o => o.IdUzytkownik == z.UzyIdUzytkownik)
                                 .Select(o => o.IdKsiazka)
                                 .Distinct()
                                 .Count(),
-                            // Liczba napisanych recenzji dla znajomego
                             IloscRecenzji = _context.Recenzjas
                                 .Count(r => r.IdUzytkownik == z.UzyIdUzytkownik)
                         }
@@ -169,13 +162,11 @@ namespace GoodReviewBackend.Controllers
                             z.IdUzytkownikNavigation.Nazwisko,
                             z.IdUzytkownikNavigation.EMail,
                             z.IdUzytkownikNavigation.Zdjecie,
-                            // Liczba ocenionych książek dla znajomego
                             IloscOcenionychKsiazek = _context.Ocenas
                                 .Where(o => o.IdUzytkownik == z.IdUzytkownik)
                                 .Select(o => o.IdKsiazka)
                                 .Distinct()
                                 .Count(),
-                            // Liczba napisanych recenzji dla znajomego
                             IloscRecenzji = _context.Recenzjas
                                 .Count(r => r.IdUzytkownik == z.IdUzytkownik)
                         }

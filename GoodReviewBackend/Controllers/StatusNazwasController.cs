@@ -20,14 +20,12 @@ namespace GoodReviewBackend.Controllers
             _context = context;
         }
 
-        // GET: api/StatusNazwas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StatusNazwa>>> GetStatusNazwas()
         {
             return await _context.StatusNazwas.ToListAsync();
         }
 
-        // GET: api/StatusNazwas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<StatusNazwa>> GetStatusNazwa(int id)
         {
@@ -41,8 +39,7 @@ namespace GoodReviewBackend.Controllers
             return statusNazwa;
         }
 
-        // PUT: api/StatusNazwas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStatusNazwa(int id, StatusNazwa statusNazwa)
         {
@@ -72,8 +69,7 @@ namespace GoodReviewBackend.Controllers
             return NoContent();
         }
 
-        // POST: api/StatusNazwas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<StatusNazwa>> PostStatusNazwa(StatusNazwa statusNazwa)
         {
@@ -83,7 +79,6 @@ namespace GoodReviewBackend.Controllers
             return CreatedAtAction("GetStatusNazwa", new { id = statusNazwa.IdStatusNazwa }, statusNazwa);
         }
 
-        // DELETE: api/StatusNazwas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStatusNazwa(int id)
         {
